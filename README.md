@@ -1,36 +1,68 @@
-# NLP Project
+# Natural Language Processing: IMDb Sentiment Analysis and News Classification
 
-By Akhil Binjola
+Two text classification projects built with TF-IDF features and classical machine learning models.
 
-Two text-classification projects with TF-IDF + classical ML (scikit-learn, NLTK).
+| Part | Task | Data | Best model | Test accuracy |
+|---|---|---|---|---|
+| A | Movie review sentiment (positive / negative) | 50,000 IMDb reviews | Logistic Regression | 88.9% |
+| B | News article categorisation (10 categories) | News articles dataset | Logistic Regression | 79.4% |
 
-## Part A – IMDb Movie Review Sentiment Analysis
-File: `NLP_partA.ipynb`
-Dataset: `Imdb - data_imdb.csv` (review, sentiment – ~50k balanced pos/neg)
+---
 
-- Preprocessing: lowercase, punctuation/special-char removal, stopword removal, word_tokenize
-- Features: TF-IDF (max_features=5000) + word_count, char_count, avg_word_length
-- Split: 80/20 train-test
-- Models:
-  - LogisticRegression – ~88.88% accuracy
-  - MultinomialNB – ~85.32%
-  - LinearSVC – ~88.58%, best speed/accuracy trade-off
-- Evaluation: accuracy, precision/recall/F1, confusion-matrix heatmaps
+## Part A: IMDb Sentiment Analysis
 
-Video: https://drive.google.com/file/d/1ePAW0Qjv_zAgNVUytilGZD61NEyl1sv5/view?usp=sharing
+**Approach**
+1. Cleaned the review text: lower-casing, removing punctuation, tokenising and removing stop words with NLTK.
+2. Converted text to vectors with TF-IDF (`max_features=5000`).
+3. 80/20 train–test split (`random_state=42`), so 10,000 reviews were held out for testing.
+4. Trained and compared three classifiers.
 
-## Part B – News Article Classification
-File: `NLP_partB.ipynb`
-Dataset: `data_news - data_news.csv` (category, headline, short_description)
+| Model | Accuracy |
+|---|---|
+| **Logistic Regression** | **88.9%** |
+| Linear SVM | 88.5% |
+| Multinomial Naive Bayes | 85.3% |
 
-- Cleaning: lowercase, non-word to space, whitespace normalize, dropna, combine headline + short_description to `text`
-- Features: TfidfVectorizer (english stopwords, max_features=5000), EDA category distribution
-- Models: LogisticRegression, MultinomialNB, LinearSVC with 80/20 split + 5-fold cross-validation
-- Evaluation: accuracy, CV accuracy, classification_report, confusion matrices
+Logistic Regression is balanced across both classes (precision, recall and F1 all about 0.88–0.90).
 
-Video: https://drive.google.com/file/d/1K8Mh_UGRz7vcR8f41wbx_dcAz0R7otHw/view?usp=sharing
+---
+
+## Part B: News Article Classification
+
+**Approach**
+1. Built the text input from each article's headline and short description, then lower-cased it and cleaned non-word characters with regular expressions.
+2. TF-IDF features (`max_features=5000`, English stop words removed).
+3. 80/20 train–test split (`random_state=42`) and 5-fold cross-validation.
+4. Compared Logistic Regression, Linear SVM and Naive Bayes.
+5. Saved the best model and the vectorizer with `joblib` so the classifier can be reused without retraining.
+
+**Results:** Logistic Regression was best, with 79.4% test accuracy and 78.3% mean accuracy in 5-fold cross-validation. The gap between the two is small, which suggests the model generalises rather than overfits.
+
+The 10 categories include Politics, Sports, Business, Wellness and Travel. Because there are ten classes, 79% accuracy is a stronger result than it looks next to the two-class sentiment task.
+
+---
+
+## Tech stack
+
+Python, Pandas, NumPy, NLTK, Scikit-learn, Matplotlib, Seaborn, Joblib.
 
 ## How to run
-1. `pip install pandas numpy nltk scikit-learn matplotlib seaborn`
-2. `python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt'); nltk.download('punkt_tab')"`
-3. Open notebooks in Jupyter/Colab, point CSV paths to local files, run all.
+
+```bash
+git clone https://github.com/AkhilBinjola/NLP-Project
+cd NLP-Project
+pip install -r requirements.txt
+jupyter notebook
+```
+
+The notebooks read their CSV files from `/content/` (Google Colab). To run locally, change the `pd.read_csv(...)` paths to where you saved the datasets. Part A needs the NLTK stop-word and tokenizer data, which you can download once with `nltk.download('stopwords')` and `nltk.download('punkt')`.
+
+## Ideas for improvement
+
+- Try n-grams and larger TF-IDF vocabularies.
+- Compare against a transformer model such as DistilBERT.
+- Add a per-class confusion matrix for the news classifier to see which categories get confused.
+
+## Author
+
+Akhil Binjola · [LinkedIn](https://linkedin.com/in/akhilbinjola) · [GitHub](https://github.com/AkhilBinjola)
